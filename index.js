@@ -4,6 +4,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json());
+
 const Student = require("./models/student");
 
 const port = process.env.PORT || 3000;
@@ -20,17 +24,19 @@ mongoose.connect(mongoDB);
 
 // CREATE - Using .create() over the Schema that we have declared in the models folder
 
-app.post("/students", (req, res) =>
+app.post("/students", (req, res) => {
+  const package = req.body;
+
   Student.create({
-    name: "Rid",
-    first_name: "Vek",
-    email: "rid@vek.com",
+    name: package.name,
+    first_name: package.first_name,
+    email: package.email,
   })
     .then((newStudents) => {
       res.send(newStudents);
     })
-    .catch((err) => res.send(err))
-);
+    .catch((err) => res.send(err));
+});
 
 app.get("/", (req, res) =>
   Student.find({})
